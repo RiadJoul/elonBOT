@@ -40,7 +40,7 @@ function AnalyzeText(text){
     };
     fetchApi();
 }
-// fetching api
+// fetching api for response
 function fetchApi(){
     naturalLanguageUnderstanding.analyze(analyzeParams)
     .then(analysisResults => {
