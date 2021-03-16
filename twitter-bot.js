@@ -60,7 +60,6 @@ async function main(){
         console.log(e);
       }
   }
-
 };
   console.log("Starting the twitter bot ...");
   console.log('==> checking for new Tweet...' + Time);
@@ -82,8 +81,6 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   // keywords(to see if the tweets is talking about bitcoin)
  //  emotion/sentiment(to see if he's talking about it in a positive way or not)
 var analyzeParams = [];
-
-
 function AnalyzeText(text){
     analyzeParams = {
         'text': text,
