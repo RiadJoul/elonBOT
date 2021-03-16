@@ -45,7 +45,8 @@ async function main(){
   try {
       // Make request
       const response = await getRequest();
-        if(response.data[0].text != tweet){
+      console.log(response);
+       if(response.data[0].text != tweet){
           tweet = response.data[0].text;
           AnalyzeText(tweet);
         }
@@ -81,6 +82,8 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   // keywords(to see if the tweets is talking about bitcoin)
  //  emotion/sentiment(to see if he's talking about it in a positive way or not)
 var analyzeParams = [];
+
+
 function AnalyzeText(text){
     analyzeParams = {
         'text': text,
