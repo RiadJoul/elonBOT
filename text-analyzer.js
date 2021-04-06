@@ -1,5 +1,8 @@
 require('dotenv').config();
 
+// -------------------------------------------
+
+
 // IBM text analysis api
 const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
@@ -16,7 +19,6 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
  //  emotion/sentiment(to see if he's talking about it in a positive way or not)
 var analyzeParams = [];
 
-AnalyzeText(tweet);
 
 function AnalyzeText(text){
     analyzeParams = {
@@ -39,8 +41,9 @@ function AnalyzeText(text){
         },
     };
     fetchApi();
+    console.log(' 🤖 NEW TWEET : ' + text + ' ' + Time);
 }
-// fetching api for response
+
 function fetchApi(){
     naturalLanguageUnderstanding.analyze(analyzeParams)
     .then(analysisResults => {

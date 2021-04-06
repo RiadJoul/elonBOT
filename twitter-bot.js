@@ -4,7 +4,6 @@ require("dotenv").config();
 // elon Twitter ID = '44196397';
 
 // Twitter API
-
 const needle = require('needle');
 
 const BearerToken = process.env.BEARERTOKEN;
@@ -38,14 +37,12 @@ async function getRequest() {
 }
 
 var current = new Date();
-var Time = current.getHours() + ':' + current.getMinutes()
+var Time = current.getHours() + ':' + current.getMinutes();
 
 async function main(){
-
   try {
       // Make request
       const response = await getRequest();
-      console.log(response);
        if(response.data[0].text != tweet){
           tweet = response.data[0].text;
           AnalyzeText(tweet);
@@ -54,12 +51,13 @@ async function main(){
           console.log('==> checking for new Tweet...' + Time);
         }
   } catch (e) {
-      // if it doesn't find any tweets
+      // if it doesn't find any tweets]
       if(e instanceof TypeError)
       console.error('Account Has no tweet  ' + Time);
       else{
         console.log(e);
       }
+    
   }
 };
   console.log("Starting the twitter bot ...");
@@ -111,12 +109,63 @@ function AnalyzeText(text){
 function fetchApi(){
     naturalLanguageUnderstanding.analyze(analyzeParams)
     .then(analysisResults => {
-      console.log(JSON.stringify(analysisResults, null, 2));
+      analysisResults = JSON.stringify(analysisResults, null, 2);
+      var res = JSON.parse(analysisResults);
+      map(res);
     })
     // error handler
     .catch(err => {
       console.log('error:', err);
     });
+}
+
+
+
+/// To Do map
+function map(json) {
+  var response = {
+    "category" : '',
+    "cryptocurrency" : '',
+    "emotion" : '', // postive or negative
+  };
+
+  if(json.result.categories[0].label == '/finance/investing/funds'
+  || json.result.categories[0].label == '/finance/investing/day trading'
+  || json.result.categories[0].label == '/finance/bank/bank account'
+  || json.result.categories[0].label == '/finance/financial news'
+  || json.result.categories[0].label == '/finance/investing'
+  || json.result.categories[0].label == '/finance/investing/beginning investing'){response.category = '/finance/investing'}
+
+  else if(json.result.categories[1].label == '/finance/investing/funds'
+  || json.result.categories[1].label == '/finance/investing/day trading'
+  || json.result.categories[1].label == '/finance/bank/bank account'
+  || json.result.categories[1].label == '/finance/financial news'
+  || json.result.categories[1].label == '/finance/investing'
+  || json.result.categories[1].label == '/finance/investing/beginning investing'){response.category = '/finance/investing'}
+
+// crypto
+    switch(json.result.keywords[0].text) {
+      case 'bitcoin':
+        response.cryptocurrency = 'bitcoin';
+        response.emotion = json.result.keywords[0].sentiment.label;
+        break;
+      case 'ethereum':
+        response.cryptocurrency = 'dogecoin';
+        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
+        break;
+      case 'dogecoin':
+        response.cryptocurrency = 'dogecoin';
+        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
+        break;
+      case 'litecoin':
+        response.cryptocurrency = 'litecoin';
+        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
+        break;
+      default:
+        break;
+    }
+    
+    console.log(response);
 }
 
 module.exports = main;
