@@ -17,7 +17,7 @@ async function getRequest() {
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
   const params = {
-      'query': 'from:JoulRiad -is:retweet',
+      'query': 'from:elonmusk -is:retweet',
       'tweet.fields': 'author_id',
   }
 
