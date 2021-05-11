@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 
-// elon Twitter ID = '44196397';
 
 // Twitter API
 const needle = require('needle');
@@ -32,7 +31,7 @@ async function getRequest() {
   if (res.body) {
       return res.body;
   } else {
-      throw new Error('Unsuccessful request');
+      throw new Error('Unsuccssful requests');
   }
 }
 
@@ -53,7 +52,7 @@ async function main(){
   } catch (e) {
       // if it doesn't find any tweets]
       if(e instanceof TypeError)
-      console.error('Account Has no tweet  ' + Time);
+      console.error('Account Has no tweet ' + Time);
       else{
         console.log(e);
       }
@@ -62,7 +61,6 @@ async function main(){
 };
   console.log("Starting the twitter bot ...");
   console.log('==> checking for new Tweet...' + Time);
-
 // -------------------------------------------
 
 // IBM text analysis api
@@ -85,7 +83,13 @@ var analyzeParams = [];
 function AnalyzeText(text){
     analyzeParams = {
         'text': text,
-        'features': {
+        'features': { 
+          'sentiment':{
+            'document':{
+              'score': true,
+              'label': true
+            }
+          },
           'entities': {
             'emotion': true,
             'sentiment': true,
@@ -111,61 +115,68 @@ function fetchApi(){
     .then(analysisResults => {
       analysisResults = JSON.stringify(analysisResults, null, 2);
       var res = JSON.parse(analysisResults);
-      map(res);
+      map(res,analyzeParams.text);
     })
     // error handler
     .catch(err => {
       console.log('error:', err);
     });
 }
+// ------------------------------- 
 
+// connecting to our database
 
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user:  'root',
+  password:  '',
+  database: 'elonbot'
+});
+
+process.env.NTBA_FIX_319 = 1;
+
+const TelegramBot = require('node-telegram-bot-api');
+
+const token = process.env.telegramtoken;
+
+// Create a bot that uses 'polling' to fetch new updates
+const bot = new TelegramBot(token, {polling: true});
+
+function sendTelegram(message) {
+  connection.query('SELECT * FROM userdata', function(err, rows, fields) {
+    if (err) {throw err};
+      for (var i = 0; i < rows.length; i++) {
+      bot.sendMessage(rows[i].chatId,message);
+    }
+  })
+}
 
 /// To Do map
-function map(json) {
+function map(json,text) {
   var response = {
     "category" : '',
     "cryptocurrency" : '',
-    "emotion" : '', // postive or negative
+    "state" : '', // postive or negative
+    "accuracy" : '',
   };
+  response.state = json.result.sentiment.document.label;
+  if(json.result.sentiment.document.score < 0)
+  {response.accuracy = json.result.sentiment.document.score * -1}
+  else{
+    response.accuracy = json.result.sentiment.document.score;
+  }
+  if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin'}
+  if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin'}
+  if(text.includes('Dogecoin')){response.cryptocurrency = 'Dogecoin'}
+  if(text.includes('litecoin')){response.cryptocurrency = 'litecoin'}
+  if(text.includes('cardano')){response.cryptocurrency = 'cardano'}
 
-  if(json.result.categories[0].label == '/finance/investing/funds'
-  || json.result.categories[0].label == '/finance/investing/day trading'
-  || json.result.categories[0].label == '/finance/bank/bank account'
-  || json.result.categories[0].label == '/finance/financial news'
-  || json.result.categories[0].label == '/finance/investing'
-  || json.result.categories[0].label == '/finance/investing/beginning investing'){response.category = '/finance/investing'}
 
-  else if(json.result.categories[1].label == '/finance/investing/funds'
-  || json.result.categories[1].label == '/finance/investing/day trading'
-  || json.result.categories[1].label == '/finance/bank/bank account'
-  || json.result.categories[1].label == '/finance/financial news'
-  || json.result.categories[1].label == '/finance/investing'
-  || json.result.categories[1].label == '/finance/investing/beginning investing'){response.category = '/finance/investing'}
 
 // crypto
-    switch(json.result.keywords[0].text) {
-      case 'bitcoin':
-        response.cryptocurrency = 'bitcoin';
-        response.emotion = json.result.keywords[0].sentiment.label;
-        break;
-      case 'ethereum':
-        response.cryptocurrency = 'dogecoin';
-        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
-        break;
-      case 'dogecoin':
-        response.cryptocurrency = 'dogecoin';
-        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
-        break;
-      case 'litecoin':
-        response.cryptocurrency = 'litecoin';
-        response.emotion = json.result.keywords[0].sentiment.label = response.emotion;
-        break;
-      default:
-        break;
-    }
-    
-    console.log(response);
+   let message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " + (response.accuracy * 100) + "%  " + response.state;
+   sendTelegram(message);
 }
 
 module.exports = main;
