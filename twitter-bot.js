@@ -17,7 +17,7 @@ async function getRequest() {
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
   const params = {
-      'query': 'from:elonmusk -is:retweet',
+      'query': 'from:Joulriad -is:retweet',
       'tweet.fields': 'author_id',
   }
 
@@ -124,15 +124,6 @@ function fetchApi(){
 }
 // ------------------------------- 
 
-// connecting to our database
-
-const mysql = require('mysql');
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user:  'root',
-  password:  '',
-  database: 'elonbot'
-});
 
 process.env.NTBA_FIX_319 = 1;
 
@@ -140,17 +131,15 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const token = process.env.telegramtoken;
 
+const id = '-412485763';
+
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
 function sendTelegram(message) {
-  connection.query('SELECT * FROM userdata', function(err, rows, fields) {
-    if (err) {throw err};
-      for (var i = 0; i < rows.length; i++) {
-      bot.sendMessage(rows[i].chatId,message);
-    }
-  })
+      bot.sendMessage(id,message);
 }
+
 
 /// To Do map
 function map(json,text) {
