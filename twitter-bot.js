@@ -149,11 +149,12 @@ function map(json,text) {
     "state" : '', // postive or negative
     "accuracy" : '',
   };
+  let message;
   response.state = json.result.sentiment.document.label;
   if(json.result.sentiment.document.score < 0)
-  {response.accuracy = json.result.sentiment.document.score * -1}
+  {response.accuracy = Math.round(json.result.sentiment.document.score * -1)}
   else{
-    response.accuracy = json.result.sentiment.document.score;
+    response.accuracy = Math.round(json.result.sentiment.document.score);
   }
   if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin'}
   if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin'}
@@ -161,11 +162,14 @@ function map(json,text) {
   if(text.includes('litecoin')){response.cryptocurrency = 'litecoin'}
   if(text.includes('cardano')){response.cryptocurrency = 'cardano'}
 
+  if(response.state == 'neutral'){message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state;}
+  else{
+    message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state  + '   ' +  'TWEET : ' + text;
+  }
 
-
-// crypto
-   let message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " + (response.accuracy * 100) + "%  " + response.state;
-   sendTelegram(message);
+   //sendTelegram(message);
+   console.log(response);
+   console.log(message);
 }
 
 module.exports = main;
