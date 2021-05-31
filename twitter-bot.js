@@ -186,7 +186,7 @@ function map(json,text) {
     message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state  + '   ' +  'TWEET : ' + text;
   }
 
-  if(this.sendMessage == true){sendTelegram(message);}
+  if(sendMessage == true){sendTelegram(message);}
 
   
    console.log(response);
