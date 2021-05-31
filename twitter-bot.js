@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-
-
 // Twitter API
 const needle = require('needle');
 
@@ -144,7 +142,6 @@ const bot = new TelegramBot(token, {polling: true});
 function sendTelegram(message) {
       bot.sendMessage(id,message);
       sendMessage = false;
-
       aboutCrypto = false;
 }
 
