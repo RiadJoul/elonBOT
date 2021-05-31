@@ -115,6 +115,7 @@ function fetchApi(){
     .then(analysisResults => {
       analysisResults = JSON.stringify(analysisResults, null, 2);
       var res = JSON.parse(analysisResults);
+      console.log(analysisResults);
       map(res,analyzeParams.text);
     })
     // error handler
@@ -133,11 +134,18 @@ const token = process.env.telegramtoken;
 
 const id = '-412485763';
 
+let sendMessage = false;
+
+let aboutCrypto = false;
+
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
 function sendTelegram(message) {
       bot.sendMessage(id,message);
+      sendMessage = false;
+
+      aboutCrypto = false;
 }
 
 
@@ -149,27 +157,43 @@ function map(json,text) {
     "state" : '', // postive or negative
     "accuracy" : '',
   };
+
   let message;
+
   response.state = json.result.sentiment.document.label;
+
+  if(json.result.categories[0].label === '/finance/investing'
+    || json.result.categories[0].label === '/finance/investing/beginning investing')
+    {
+      // check if message is about cryptocurrency
+      sendMessage = true;
+    }
+
+  
   if(json.result.sentiment.document.score < 0)
   {response.accuracy = Math.round(json.result.sentiment.document.score * -1)}
   else{
     response.accuracy = Math.round(json.result.sentiment.document.score);
   }
-  if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin'}
-  if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin'}
-  if(text.includes('Dogecoin')){response.cryptocurrency = 'Dogecoin'}
-  if(text.includes('litecoin')){response.cryptocurrency = 'litecoin'}
-  if(text.includes('cardano')){response.cryptocurrency = 'cardano'}
+  if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin';aboutCrypto = true;}
+  if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true;}
+  if(text.includes('Dogecoin')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true;}
+  if(text.includes('litecoin')){response.cryptocurrency = 'litecoin';aboutCrypto = true;}
+  if(text.includes('cardano')){response.cryptocurrency = 'cardano';aboutCrypto = true;}
 
   if(response.state == 'neutral'){message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state;}
   else{
     message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state  + '   ' +  'TWEET : ' + text;
   }
 
-   //sendTelegram(message);
+  if(this.sendMessage == true){sendTelegram(message);}
+
+  
    console.log(response);
    console.log(message);
+   console.log(aboutCrypto);
+   console.log(sendMessage);
 }
+
 
 module.exports = main;
