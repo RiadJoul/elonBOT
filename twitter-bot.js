@@ -172,11 +172,11 @@ function map(json,text) {
   else{
     response.accuracy = Math.round(json.result.sentiment.document.score);
   }
-  if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin';aboutCrypto = true;}
-  if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true;}
-  if(text.includes('Dogecoin')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true;}
-  if(text.includes('litecoin')){response.cryptocurrency = 'litecoin';aboutCrypto = true;}
-  if(text.includes('cardano')){response.cryptocurrency = 'cardano';aboutCrypto = true;}
+  if(text.includes('Bitcoin')){response.cryptocurrency = 'Bitcoin';aboutCrypto = true; sendMessage = true;}
+  if(text.includes('Doge')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true; sendMessage = true;}
+  if(text.includes('Dogecoin')){response.cryptocurrency = 'Dogecoin';aboutCrypto = true; sendMessage = true;}
+  if(text.includes('litecoin')){response.cryptocurrency = 'litecoin';aboutCrypto = true;sendMessage = true;}
+  if(text.includes('cardano')){response.cryptocurrency = 'cardano';aboutCrypto = true;sendMessage = true;}
 
   if(response.state == 'neutral'){message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is " +response.state;}
   else{
