@@ -9,16 +9,17 @@ const endpointUrl = "https://api.twitter.com/2/tweets/search/recent";
 
 var tweet = '';
 
+const elonTwitterID = '44196397';
+
 async function getRequest() {
 
   // Edit query parameters below
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
   const params = {
-      'query': 'from: JoulRiad',
-      'tweet.fields': 'author_id',
-      'max_results' : 5
-  }
+    ids: elonTwitterID,
+    'tweet.fields': 'created_at',
+  };
 
   const res = await needle('get', endpointUrl, params, {
       headers: {
