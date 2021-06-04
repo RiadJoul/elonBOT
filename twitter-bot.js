@@ -24,7 +24,7 @@ async function getRequest() {
 
   const res = await needle('get', endpointUrl, params, {
       headers: {
-          "User-Agent": "v2RecentSearchJS",
+          "User-Agent": "v2UserTweetsJS",
           "authorization": `Bearer ${BearerToken}`
       }
   })
