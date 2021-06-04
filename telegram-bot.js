@@ -45,8 +45,9 @@ bot.onText(/\/start/, (msg) => {
     let chatId = msg.chat.id;
     // store the chatID in a database
       // check if the id already exists
-      connection.query("INSERT INTO userdata (chatId) VALUES (" + mysql.escape(chatId) + ")", function () {
-        console.log('user signed up');
-      });
+     // connection.query("INSERT INTO userdata (chatId) VALUES (" + mysql.escape(chatId) + ")", function () {
+     //   console.log('user signed up');
+     // });
+     console.log(chatId);
      bot.sendMessage(chatId,'congratulations! , You have signed up for Elon Bot');
 });

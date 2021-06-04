@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-// Twitter API
+// 1tter API
 const needle = require('needle');
 
 const BearerToken = process.env.BEARERTOKEN;
@@ -15,8 +15,9 @@ async function getRequest() {
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
   const params = {
-      'query': 'from:Joulriad -is:retweet',
+      'query': 'from:elonmusk -is:retweet',
       'tweet.fields': 'author_id',
+      'max_results': 1,
   }
 
   const res = await needle('get', endpointUrl, params, {
