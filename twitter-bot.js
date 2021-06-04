@@ -17,7 +17,6 @@ async function getRequest() {
   const params = {
       'query': 'from:elonmusk -is:retweet',
       'tweet.fields': 'author_id',
-      'max_results': 1,
   }
 
   const res = await needle('get', endpointUrl, params, {
@@ -43,6 +42,7 @@ async function main(){
       const response = await getRequest();
        if(response.data[0].text != tweet){
           tweet = response.data[0].text;
+          console.log(tweet);
           AnalyzeText(tweet);
         }
         else{
