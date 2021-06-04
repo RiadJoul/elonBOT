@@ -1,25 +1,26 @@
 require("dotenv").config();
 
-// 1tter API
+// Twitter API
 const needle = require('needle');
 
 const BearerToken = process.env.BEARERTOKEN;
 
-const endpointUrl = "https://api.twitter.com/2/tweets/search/recent";
+const elonMuskId = '44196397';
+
+const endpointUrl = `https://api.twitter.com/2/users/${elonMuskId}/tweets`;
 
 var tweet = '';
-
-const elonTwitterID = '44196397';
 
 async function getRequest() {
 
   // Edit query parameters below
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
-  const params = {
-    ids: elonTwitterID,
-    'tweet.fields': 'created_at',
-  };
+  let params = {
+    "max_results": 5,
+    "tweet.fields": "created_at",
+    "expansions": "author_id"
+}
 
   const res = await needle('get', endpointUrl, params, {
       headers: {
@@ -44,7 +45,6 @@ async function main(){
       const response = await getRequest();
        if(response.data[0].text != tweet){
           tweet = response.data[0].text;
-          console.log(tweet);
           AnalyzeText(tweet);
         }
         else{
