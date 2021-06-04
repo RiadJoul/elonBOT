@@ -43,6 +43,7 @@ async function main(){
   try {
       // Make request
       const response = await getRequest();
+      console.log(response);
        if(response.data[0].text != tweet){
           tweet = response.data[0].text;
           AnalyzeText(tweet);
