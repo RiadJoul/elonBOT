@@ -7,7 +7,9 @@ const BearerToken = process.env.BEARERTOKEN;
 
 const elonMuskId = '44196397';
 
-const endpointUrl = `https://api.twitter.com/2/users/${elonMuskId}/tweets`;
+const demoID = '1368235810668023812';
+
+const endpointUrl = `https://api.twitter.com/2/users/${demoID}/tweets`;
 
 var tweet = '';
 
@@ -17,15 +19,15 @@ async function getRequest() {
   // specify a search query, and any additional fields that are required
   // by default, only the Tweet ID and text fields are returned
   let params = {
-    "max_results": 5,
     "tweet.fields": "created_at",
-    "expansions": "author_id"
+    "expansions":"attachments.media_keys",
+    "media.fields":"url"
 }
 
   const res = await needle('get', endpointUrl, params, {
       headers: {
           "User-Agent": "v2UserTweetsJS",
-          "authorization": `Bearer ${BearerToken}`
+          "authorization": `Bearer ${BearerToken}`,
       }
   })
 
@@ -43,7 +45,9 @@ async function main(){
   try {
       // Make request
       const response = await getRequest();
-      console.log(response);
+      let url = response.includes.media[0].url;
+      console.log(url);
+      analyzeImage(url);
        if(response.data[0].text != tweet){
           tweet = response.data[0].text;
           AnalyzeText(tweet);
@@ -117,7 +121,6 @@ function fetchApi(){
     .then(analysisResults => {
       analysisResults = JSON.stringify(analysisResults, null, 2);
       var res = JSON.parse(analysisResults);
-      console.log(analysisResults);
       map(res,analyzeParams.text);
     })
     // error handler
@@ -125,7 +128,29 @@ function fetchApi(){
       console.log('error:', err);
     });
 }
-// ------------------------------- 
+// ----------Image Processing
+
+
+const got = require('got');
+
+const apiKey = process.env.IMAGGAAPIKEY;
+const apiSecret = process.env.IMAGGAAPISECRET;
+
+async function analyzeImage(imageUrl){
+    try {
+      var url = 'https://api.imagga.com/v2/tags?image_url=' + encodeURIComponent(imageUrl);
+        const response = await got(url, {username: apiKey, password: apiSecret});
+        var res = JSON.parse(response.body);
+        mapImage(res.result);
+
+    } catch (error) {
+        console.log(error.response.body);
+    }
+}
+
+
+
+//-------------------------------
 
 
 process.env.NTBA_FIX_319 = 1;
@@ -134,6 +159,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const token = process.env.telegramtoken;
 
+// Telegram Group ID
 const id = '-412485763';
 
 let sendMessage = false;
@@ -148,6 +174,7 @@ function sendTelegram(message) {
       sendMessage = false;
       aboutCrypto = false;
 }
+
 
 
 /// To Do map
@@ -195,6 +222,59 @@ function map(json,text) {
    console.log(aboutCrypto);
    console.log(sendMessage);
 }
+
+
+
+function mapImage(JSON){
+  let message;
+  console.log(JSON.tags[0].tag.en);
+  console.log(JSON.tags[1].tag.en);
+  console.log(JSON.tags[2].tag.en);
+  var response = {
+    "category" : '',
+    "cryptocurrency" : '',
+    "state" : '', // postive or negative
+    "accuracy" : '',
+  };
+  
+  if(JSON.tags[0].tag.en == 'dingo' ||
+  JSON.tags[1].tag.en == 'dingo' ||
+  JSON.tags[2].tag.en == 'dingo')
+        {
+          response.cryptocurrency = 'dogecoin';
+          aboutCrypto = true; sendMessage = true;
+        }
+        else if(JSON.tags[0].tag.en == 'cartoon' ||
+        JSON.tags[1].tag.en == 'cartoon' ||
+        JSON.tags[2].tag.en == 'cartoon')
+        {
+          response.cryptocurrency = 'dogecoin';
+          aboutCrypto = true; sendMessage = true;
+        }
+        else if(JSON.tags[0].tag.en == 'currency' ||
+        JSON.tags[1].tag.en == 'currency' ||
+        JSON.tags[2].tag.en == 'currency')
+        {
+          response.cryptocurrency = 'Bitcoin';
+          aboutCrypto = true; sendMessage = true;
+        }
+        else if(JSON.tags[0].tag.en == 'icon' ||
+        JSON.tags[1].tag.en == 'icon' ||
+        JSON.tags[2].tag.en == 'icon')
+        {
+          response.cryptocurrency = 'Bitcoin';
+          aboutCrypto = true; sendMessage = true;
+        }
+        message = "Elon Musk just tweeted about " + response.cryptocurrency +  " our results shown that the message is postive";
+
+        //if(sendMessage == true){sendTelegram(message);}
+
+        console.log(response);
+        console.log(message);
+        console.log(aboutCrypto);
+        console.log(sendMessage);
+}
+
 
 
 module.exports = main;
